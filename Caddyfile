@@ -1,0 +1,11 @@
+{\$N8N_HOST} {
+    reverse_proxy n8n:5678
+}
+
+{\$API_HOST} {
+    reverse_proxy backend:4000
+}
+
+{\$WAHA_HOST} {
+    reverse_proxy waha:3000
+}

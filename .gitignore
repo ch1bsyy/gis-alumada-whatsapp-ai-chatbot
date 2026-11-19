@@ -1,0 +1,13 @@
+.env
+backend/.env
+
+# Authentication WA Session and Volume Local Data
+waha-sessions/
+caddy_data/
+caddy_config/
+n8n_data/
+
+# Dependencies & log
+node_modules/
+npm-debug.log*
+.DS_Store

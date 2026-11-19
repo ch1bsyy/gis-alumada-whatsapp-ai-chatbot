@@ -1,0 +1,89 @@
+services:
+  caddy:
+    image: caddy:alpine
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - chatbot_net
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    restart: unless-stopped
+    environment:
+      - N8N_HOST=\${N8N_HOST}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - WEBHOOK_URL=https://\${N8N_HOST}/
+      - GENERIC_TIMEZONE=Asia/Jakarta
+      - TZ=Asia/Jakarta
+      - N8N_RUNNERS_ENABLED=true
+      - EXECUTIONS_DATA_PRUNE=true
+      - EXECUTIONS_DATA_MAX_AGE=168
+      - NODE_OPTIONS=--max-old-space-size=1536
+    volumes:
+      - n8n_data:/home/node/.n8n
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - chatbot_net
+
+  waha:
+    image: devlikeapro/waha:latest
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      - WHATSAPP_DEFAULT_ENGINE=NOWEB
+      - WAHA_API_KEY=\${WAHA_API_KEY}
+      - WAHA_DASHBOARD_USERNAME=\${WAHA_DASHBOARD_USERNAME}
+      - WAHA_DASHBOARD_PASSWORD=\${WAHA_DASHBOARD_PASSWORD}
+      - WHATSAPP_HOOK_URL=http://n8n:5678/webhook/whatsapp
+      - WHATSAPP_HOOK_EVENTS=message
+      - TZ=Asia/Jakarta
+    volumes:
+      - ./waha-sessions:/app/.sessions
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - chatbot_net
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - chatbot_net
+
+volumes:
+  caddy_data:
+  caddy_config:
+  n8n_data:
+
+networks:
+  chatbot_net:
+    driver: bridge
