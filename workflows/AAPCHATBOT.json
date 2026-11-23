@@ -1,0 +1,375 @@
+{
+  "name": "AAPCHATBOT",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "@devlikeapro/n8n-nodes-waha.wahaTrigger",
+      "typeVersion": 202502,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9ea647bb-7450-42b2-a0fa-fa2c0901246a",
+      "name": "WAHA Trigger",
+      "webhookId": "0d4bfae4-87af-4f1b-9b6f-c0fbfecf67ec"
+    },
+    {
+      "parameters": {
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        304,
+        16
+      ],
+      "id": "2b090af3-f5e2-4f6c-9241-a7c990377e53",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Seen",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        528,
+        16
+      ],
+      "id": "5cad4ca4-b974-4ef1-aadf-33cb541e2d48",
+      "name": "Send Seen",
+      "credentials": {
+        "wahaApi": {
+          "id": "qc5efaA1rWQAkX2u",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": "={{ $('Edit Fields').item.json.payload.body.length/5 }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        752,
+        80
+      ],
+      "id": "e62d1e6b-e641-412e-b5ab-f2cbb4554868",
+      "name": "Wait",
+      "webhookId": "4d82d1c6-d133-49eb-9375-cf9a08959393"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Start Typing",
+        "session": "={{ $('Edit Fields').item.json.session }}",
+        "chatId": "={{ $('Edit Fields').item.json.payload.from }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        960,
+        80
+      ],
+      "id": "d098a019-9b8e-4ba5-97cd-f63ea46b36aa",
+      "name": "Start Typing",
+      "credentials": {
+        "wahaApi": {
+          "id": "qc5efaA1rWQAkX2u",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Edit Fields').item.json.payload.body }}",
+        "options": {
+          "systemMessage": "=Kamu adalah Admin Support Internal PT Alumada Artha Prima yang membantu rekan-rekan (Personil Satpam, Danru, Koordinator, Klien, dan Admin) menggunakan aplikasi Guard Information System (GIS) lewat WhatsApp.\n\nGAYA BICARA (WAJIB NATURAL & RAMAH):\n1. Gunakan bahasa Indonesia yang santai, sopan, hangat, dan akrab layaknya rekan kerja/admin di WhatsApp (gunakan kata \"aku/saya\" dan \"kamu/Anda\" secara natural, sesekali pakai kata seperti \"Siap,\", \"Boleh,\", atau \"Gampang kok,\").\n\n2. DILARANG mengulang kalimat template seperti \"Halo, selamat datang!\" atau \"Ada yang bisa saya bantu hari ini?\" di setiap jawaban.\n   - HANYA balas dengan sapaan jika pesan user memang murni sapaan (contoh: \"Halo\", \"Pagi\", \"Assalamualaikum\"). Contoh balasan sapaan: \"Halo! 👋 Ada yang bisa dibantu soal aplikasi GIS hari ini?\"\n   - Jika user langsung bertanya atau meminta panduan, LANGSUNG jawab intinya tanpa basa-basi pembuka yang kaku.\n\n3. Tutup jawaban dengan kalimat ringan dan natural (contoh: \"Kalau masih ada yang bingung atau kendala di lapangan, kabari aja ya!\").\n\nATURAN TOOL & DATA (ANTI-HALUSINASI):\n1. Setiap kali user bertanya tentang aplikasi GIS, fitur/layanan yang tersedia, cara penggunaan, atau kendala operasional, WAJIB panggil tool `cari_panduan_gis` terlebih dahulu.\n\n2. JANGAN PERNAH mengarang layanan perusahaan di luar data yang dikembalikan oleh tool `cari_panduan_gis`. Jika user bertanya \"layanan apa aja yang tersedia?\", cari info sistem GIS lewat tool lalu jelaskan fitur utama GIS (Penjagaan, Patroli, Pengawalan, Pengaturan, Laporan Kegiatan/Kejadian, Handover, KPI, dan BAP).\n\n3. Panduan Harus Lengkap: Jika tool mengembalikan langkah bernomor (1, 2, 3, dst.), sampaikan SELURUH langkah tersebut secara urut dari awal sampai akhir. Jangan memotong langkah.\n\n4. Penanganan Role Staff:\n   - Jika panduan yang ditemukan sudah jelas milik satu jabatan tertentu (misalnya Laporan Patroli untuk Personil, atau BAP untuk Koordinator), langsung berikan panduannya tanpa menanyakan jabatan lagi.\n   - Hanya tanyakan jabatan user di akhir jika pertanyaannya ambigu/berbeda tiap jabatan (seperti cek jadwal atau ekspor laporan).\n\nATURAN FORMAT WHATSAPP:\n1. Gunakan SATU bintang (*teks*) untuk cetak tebal. Dilarang memakai bintang ganda (**), tanda pagar (###), atau garis pemisah (---).\n2. Untuk poin daftar, selalu gunakan tanda strip dan spasi (- ) tepat di awal baris tanpa spasi di depannya.\n3. Beri jeda 1 baris kosong antar paragraf agar nyaman dibaca di layar HP.\n4. Untuk sub-judul bagian (seperti *Istilah penting:* atau *Pembagian peran:*), JANGAN diawali tanda strip (- ) dan selalu beri 1 baris kosong sebelum sub-judul tersebut."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        336,
+        368
+      ],
+      "id": "b5b32384-2bf2-41d9-ad18-ca1490fda0a3",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        272,
+        576
+      ],
+      "id": "0cdb96bf-c620-40c6-8b32-9befe20eaa55",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "2QugIqwR080WnlyW",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Stop Typing",
+        "session": "={{ $('Edit Fields').item.json.session }}",
+        "chatId": "={{ $('Edit Fields').item.json.payload.from }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        704,
+        368
+      ],
+      "id": "04e69226-e0a0-468c-ba1b-d34d40b30122",
+      "name": "Stop Typing",
+      "credentials": {
+        "wahaApi": {
+          "id": "qc5efaA1rWQAkX2u",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "={{ $('Edit Fields').item.json.session }}",
+        "chatId": "={{ $('Edit Fields').item.json.payload.from }}",
+        "text": "={{ $json.clean_text }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        1200,
+        368
+      ],
+      "id": "88f9cd92-902f-466b-9a10-067cc63ab19b",
+      "name": "Send a text message",
+      "credentials": {
+        "wahaApi": {
+          "id": "qc5efaA1rWQAkX2u",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Edit Fields').item.json.payload.from }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        416,
+        640
+      ],
+      "id": "8577307c-f640-4d62-915c-aea1a6f23702",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Gunakan tool ini untuk mencari panduan operasional (SOP), istilah, dan FAQ sistem Guard Information System (GIS) Alumada Artha Prima. Wajib dipanggil setiap kali staff bertanya tentang cara penggunaan aplikasi GIS, kendala akun/foto/shift, handover, KPI, BAP, atau laporan.",
+        "url": "http://backend:4000/api/gis/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `1 sampai 2 kata kunci utama dari pertanyaan staff (contoh: laporan kegiatan, handover, bap, kpi, lupa password, foto gagal)`, 'string') }}"
+            },
+            {
+              "name": "role",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `Jabatan penanya jika disebutkan di chat (isi salah satu: Personil, Danru, Koordinator, Klien, Admin). Kosongkan string jika penanya belum menyebutkan jabatannya.`, 'string') }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Api-Key",
+              "value": "aapguard123"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        592,
+        608
+      ],
+      "id": "9b3ffd93-9084-414a-8673-3b19cb543214",
+      "name": "find_guides_gis"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  let text = $('AI Agent').first().json.output || item.json.output || '';\n\n  // Change ** to *\n  text = text.replace(/\\*\\*(.+?)\\*\\*/g, '*$1*');\n  // Change header### to *title*\n  text = text.replace(/^#{1,6}\\s+(.+)$/gm, '*$1*');\n  // Delete line --- or ___\n  text = text.replace(/^\\s*[-_]{3,}\\s*$/gm, '');\n  // Change Sub-Title to *Sub-Title* with space before\n  text = text.replace(/^\\s*-?\\s*\\*([^*\\n]+?):?\\*\\s*:?\\s*$/gm, '\\n\\n*$1:*');\n\n  // Give space after title\n  text = text.replace(/^(\\*[^*\\n]+\\*)\\n(?=\\d+\\.|- )/gm, '$1\\n\\n');\n  // Organize the list of subpoints\n  text = text.replace(/^\\s*[•·–-]\\s+/gm, '- ');\n  // Delete Space after number\n  text = text.replace(/^\\s*(\\d+\\.)\\s+/gm, '$1 ');\n  // Make sure only one row space\n  text = text.replace(/\\n{3,}/g, '\\n\\n').trim();\n\n  return {\n    json: {\n      ...item.json,\n      clean_text: text\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        368
+      ],
+      "id": "81aa277e-63d9-40a4-8249-eca0b1b952b1",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "WAHA Trigger": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send Seen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Seen": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Start Typing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start Typing": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Stop Typing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stop Typing": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "find_guides_gis": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "8a81d0ea-513f-4b2d-bd5e-2306090b1d7d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5847038ff50a7dd463277fe3fd27f0a8ba9f4832224f0e44b2679b0080de18e8"
+  },
+  "nodeGroups": [],
+  "id": "K0oUhARjzzqdhBsf",
+  "tags": []
+}
